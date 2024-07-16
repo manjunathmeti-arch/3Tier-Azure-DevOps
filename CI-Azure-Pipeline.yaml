@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: Azure Pipelines
 
 variables:
   dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Replace with your actual service connection ID
