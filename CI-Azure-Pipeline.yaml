@@ -30,7 +30,9 @@ stages:
               npm test
             displayName: 'Install dependencies and run tests for Backend'
 
-          - task: SonarCloudAnalyze@1
+          - task: SonarQubeAnalyze@6
+            inputs:
+              jdkversion: 'JAVA_HOME_17_X64' # 'JAVA_HOME' | 'JAVA_HOME_17_X64' | 'JAVA_HOME_21_X64'. Required. JDK version source for analysis. Default: JAVA_HOME_17_X64.
             displayName: 'Run SonarQube analysis for Backend'
 
           - task: Docker@2
