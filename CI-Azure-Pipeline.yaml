@@ -1,0 +1,72 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Update this with your ACR service connection ID
+  backendImageRepository: 'backend-3Tier'
+  frontendImageRepository: 'frontend-3Tier'
+  containerRegistry: '3tier.azurecr.io'
+  tag: '$(Build.BuildId)'
+
+stages:
+  - stage: Build
+    displayName: Build and Test
+    jobs:
+      - job: Backend
+        displayName: Backend Build and Test
+        steps:
+          - checkout: self
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '14.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              cd backend
+              npm install
+              npm test
+            displayName: 'Install dependencies and run tests for Backend'
+
+          - task: SonarCloudAnalyze@1
+            displayName: 'Run SonarQube analysis for Backend'
+
+          - task: Docker@2
+            displayName: 'Build and push Backend Docker image'
+            inputs:
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(containerRegistry)/$(backendImageRepository)
+              command: 'buildAndPush'
+              Dockerfile: 'backend/Dockerfile'
+              tags: |
+                $(tag)
+
+      - job: Frontend
+        displayName: Frontend Build and Test
+        steps:
+          - checkout: self
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '14.x'
+            displayName: 'Install Node.js'
+
+          - script: |
+              cd frontend
+              npm install
+              npm run test  # Assumed you have a test script configured in package.json
+            displayName: 'Install dependencies and run tests for Frontend'
+
+          - task: SonarCloudAnalyze@1
+            displayName: 'Run SonarQube analysis for Frontend'
+
+          - task: Docker@2
+            displayName: 'Build and push Frontend Docker image'
+            inputs:
+              containerRegistry: $(dockerRegistryServiceConnection)
+              repository: $(containerRegistry)/$(frontendImageRepository)
+              command: 'buildAndPush'
+              Dockerfile: 'frontend/Dockerfile'
+              tags: |
+                $(tag)
