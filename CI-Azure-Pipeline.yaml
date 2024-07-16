@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  name: Azure Pipelines
+  name: self
 
 variables:
   dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Replace with your actual service connection ID
