@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Update this with your ACR service connection ID
+  dockerRegistryServiceConnection: 'your-service-connection-id'  # Replace with your actual service connection ID
   backendImageRepository: 'backend-3Tier'
   frontendImageRepository: 'frontend-3Tier'
   containerRegistry: '3tier.azurecr.io'
@@ -15,14 +15,16 @@ stages:
   - stage: Build
     displayName: Build and Test
     jobs:
-      - job: Backend
-        displayName: Backend Build and Test
+      - job: BuildAndTest
+        displayName: Build, Test, and Analyze
         steps:
           - checkout: self
+
+          # Backend tasks
           - task: NodeTool@0
             inputs:
               versionSpec: '14.x'
-            displayName: 'Install Node.js'
+            displayName: 'Install Node.js for Backend'
 
           - script: |
               cd backend
@@ -32,45 +34,41 @@ stages:
 
           - task: SonarQubeAnalyze@6
             inputs:
-              jdkversion: 'JAVA_HOME_17_X64' # 'JAVA_HOME' | 'JAVA_HOME_17_X64' | 'JAVA_HOME_21_X64'. Required. JDK version source for analysis. Default: JAVA_HOME_17_X64.
+              jdkversion: 'JAVA_HOME_17_X64'
             displayName: 'Run SonarQube analysis for Backend'
 
           - task: Docker@2
             displayName: 'Build and push Backend Docker image'
             inputs:
-              containerRegistry: $(dockerRegistryServiceConnection)
-              repository: $(containerRegistry)/$(backendImageRepository)
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(containerRegistry)/$(backendImageRepository)'
               command: 'buildAndPush'
               Dockerfile: 'backend/Dockerfile'
               tags: |
                 $(tag)
 
-      - job: Frontend
-        displayName: Frontend Build and Test
-        dependsOn: Backend
-        steps:
-          - checkout: self
+          # Frontend tasks
           - task: NodeTool@0
             inputs:
               versionSpec: '14.x'
-            displayName: 'Install Node.js'
+            displayName: 'Install Node.js for Frontend'
 
           - script: |
               cd frontend
               npm install
-              npm run test  # Assumed you have a test script configured in package.json
+              npm run test
             displayName: 'Install dependencies and run tests for Frontend'
 
           - task: SonarQubeAnalyze@6
             inputs:
-              jdkversion: 'JAVA_HOME_17_X64' # 'JAVA_HOME' | 'JAVA_HOME_17_X64' | 'JAVA_HOME_21_X64'. Required. JDK version source for analysis. Default: JAVA_HOME_17_X64.
+              jdkversion: 'JAVA_HOME_17_X64'
             displayName: 'Run SonarQube analysis for Frontend'
 
           - task: Docker@2
             displayName: 'Build and push Frontend Docker image'
             inputs:
-              containerRegistry: $(dockerRegistryServiceConnection)
-              repository: $(containerRegistry)/$(frontendImageRepository)
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(containerRegistry)/$(frontendImageRepository)'
               command: 'buildAndPush'
               Dockerfile: 'frontend/Dockerfile'
               tags: |
