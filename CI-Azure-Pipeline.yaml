@@ -5,7 +5,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  dockerRegistryServiceConnection: 'your-service-connection-id'  # Replace with your actual service connection ID
+  dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Replace with your actual service connection ID
   backendImageRepository: 'backend-3Tier'
   frontendImageRepository: 'frontend-3Tier'
   containerRegistry: '3tier.azurecr.io'
