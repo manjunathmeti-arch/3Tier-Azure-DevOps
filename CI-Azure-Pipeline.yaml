@@ -20,6 +20,7 @@ variables:
   cliProjectName: 'myapp'
   cliSourceBack: 'backend'
   cliSourceFront: 'frontend/src'
+  SonarURL: 'http://137.116.199.163:9000/'
 
 stages:
   - stage: Build
@@ -47,7 +48,7 @@ stages:
 
           - script: |
               echo "Testing connection to SonarQube server"
-              curl -v $(SonarQube)
+              curl -v $(SonarURL)
             displayName: 'Test connection to SonarQube server'
 
           - script: |
