@@ -2,7 +2,7 @@ trigger:
 - main
 
 pool:
-  name: self
+  name: Default
 
 variables:
   dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Replace with your actual service connection ID
