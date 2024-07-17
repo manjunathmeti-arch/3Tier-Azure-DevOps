@@ -73,6 +73,8 @@ stages:
               cliSources: '$(cliSourceBack)'
               extraProperties: |
                 sonar.verbose=true
+                sonar.login='admin '
+                sonar.password='Fruitcake1.'
             displayName: 'Prepare SonarQube analysis for Backend'
 
           - task: NodeTool@0
@@ -112,6 +114,8 @@ stages:
               cliSources: '$(cliSourceFront)'
               extraProperties: |
                 sonar.verbose=true
+                sonar.login='admin '
+                sonar.password='Fruitcake1.'
             displayName: 'Prepare SonarQube analysis for Frontend'
 
           - task: NodeTool@0
