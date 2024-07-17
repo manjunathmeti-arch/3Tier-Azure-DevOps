@@ -30,6 +30,23 @@ stages:
         steps:
           - checkout: self
 
+          - script: |
+              echo "Listing root directory structure:"
+              ls -R
+            displayName: 'List root directory structure'
+
+          # Print backend directory structure to verify paths
+          - script: |
+              echo "Listing backend directory structure:"
+              ls -R backend
+            displayName: 'List backend directory structure'
+
+          # Print frontend directory structure to verify paths
+          - script: |
+              echo "Listing frontend directory structure:"
+              ls -R frontend
+            displayName: 'List frontend directory structure'
+
           # Prepare SonarQube Analysis Configuration for Backend
           - task: SonarQubePrepare@6
             inputs:
