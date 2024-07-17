@@ -12,11 +12,11 @@ variables:
   tag: '$(Build.BuildId)'
 
   #------------------------------------------FOR SONARQUBE TESTING ONLY---------------------------------------------------
-  SonarQube: 'SonarQubeServiceConnection'  # This should match your service connection name in DevOps
+  SonarQube: 'SonarQube'  # This should match your service connection name in DevOps
   scannerMode: 'CLI'
   configMode: 'manual'
-  cliProjectKey: 'YourProjectKey'  # Specify your project key here
-  cliProjectName: 'YourProjectName'  # Specify your project name here
+  cliProjectKey: 'myapp'  # Specify your project key here
+  cliProjectName: 'myapp'  # Specify your project name here
   cliSources: 'src'  # Adjust this to point to your source code directory
 
   #------------------------------------------------------------------------------------------------------------------
