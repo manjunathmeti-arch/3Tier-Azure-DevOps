@@ -16,7 +16,7 @@ variables:
   SonarQube: 'sonarqube'
   scannerMode: 'CLI'
   configMode: 'manual'
-  cliProjectKey: 'myapp'
+  cliProjectKey: '3TiertoAKS_3TiertoAKS_AZDC06zBgkN1PnsVfle6'
   cliProjectName: 'myapp'
   cliSourceBack: 'backend'
   cliSourceFront: 'frontend/src'
@@ -65,11 +65,10 @@ stages:
           # Prepare SonarQube Analysis Configuration for Backend
           - task: SonarQubePrepare@6
             inputs:
-              SonarQube: '$(SonarQube)'
+              SonarQube: '$(SonarURL)'
               scannerMode: 'CLI'
               configMode: 'manual'
               cliProjectKey: '$(cliProjectKey)'
-              cliProjectName: '$(cliProjectName)'
               cliSources: '$(cliSourceBack)'
               extraProperties: |
                 sonar.verbose=true
@@ -106,17 +105,16 @@ stages:
           # Prepare SonarQube Analysis Configuration for Frontend
           - task: SonarQubePrepare@6
             inputs:
-              SonarQube: '$(SonarQube)'
+              SonarQube: '$(SonarURL)'
               scannerMode: 'CLI'
               configMode: 'manual'
               cliProjectKey: '$(cliProjectKey)'
-              cliProjectName: '$(cliProjectName)'
               cliSources: '$(cliSourceFront)'
               extraProperties: |
                 sonar.verbose=true
                 sonar.login='admin '
                 sonar.password='Fruitcake1.'
-            displayName: 'Prepare SonarQube analysis for Frontend'
+            displayName: 'Prepare SonarQube analysis for Backend'
 
           - task: NodeTool@0
             inputs:
