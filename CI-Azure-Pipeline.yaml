@@ -17,10 +17,9 @@ variables:
   scannerMode: 'CLI'
   configMode: 'manual'
   cliProjectKey: '3TiertoAKS_3TiertoAKS_8d16b5c1-5241-492e-a9cf-d115ffe1a813'
-  cliProjectName: 'myapp'
   cliSourceBack: 'backend'
   cliSourceFront: 'frontend/src'
-  SonarURL: 'http://52.232.13.71:9000/'
+  SonarURL: 'http://52.174.30.93:9000/'
 
 stages:
   - stage: Build
