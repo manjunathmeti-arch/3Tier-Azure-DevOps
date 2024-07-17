@@ -30,6 +30,17 @@ stages:
         steps:
           - checkout: self
 
+          # Prepare SonarQube Analysis Configuration for Backend
+          - task: SonarQubePrepare@6
+            inputs:
+              SonarQube: '$(SonarQube)'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: '$(cliProjectKey)'
+              cliProjectName: '$(cliProjectName)'
+              cliSources: '$(cliSources)'
+            displayName: 'Prepare SonarQube analysis for Backend'
+
           # Backend tasks
           - task: NodeTool@0
             inputs:
