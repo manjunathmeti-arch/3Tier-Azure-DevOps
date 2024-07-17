@@ -5,24 +5,21 @@ pool:
   name: Default
 
 variables:
-  dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)  # Replace with your actual service connection ID
+  dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)
   backendImageRepository: 'backend-3Tier'
   frontendImageRepository: 'frontend-3Tier'
   containerRegistry: '3tier.azurecr.io'
   tag: '$(Build.BuildId)'
+  system.debug: true
 
-  #------------------------------------------FOR SONARQUBE TESTING ONLY---------------------------------------------------
-  SonarQube: 'SonarQube'  # This should match your service connection name in DevOps
+  # SonarQube Configuration
+  SonarQube: 'SonarQube'
   scannerMode: 'CLI'
   configMode: 'manual'
-  cliProjectKey: 'myapp'  # Specify your project key here
-  cliProjectName: 'myapp'  # Specify your project name here
-  cliSourceBack: 'backend'  # Adjust this to point to your source code directory
+  cliProjectKey: 'myapp'
+  cliProjectName: 'myapp'
+  cliSourceBack: 'backend'
   cliSourceFront: 'frontend/src'
-  #------------------------------------------------------------------------------------------------------------------
-
-  # Enable debug logging
-  system.debug: true
 
 stages:
   - stage: Build
@@ -38,17 +35,31 @@ stages:
               ls -R
             displayName: 'List root directory structure'
 
-          # Print backend directory structure to verify paths
           - script: |
               echo "Listing backend directory structure:"
               ls -R backend
             displayName: 'List backend directory structure'
 
-          # Print frontend directory structure to verify paths
           - script: |
               echo "Listing frontend directory structure:"
               ls -R frontend
             displayName: 'List frontend directory structure'
+
+          - script: |
+              echo "Testing connection to SonarQube server"
+              curl -v $(SonarQube)
+            displayName: 'Test connection to SonarQube server'
+
+          - script: |
+              echo "JAVA_HOME is set to:"
+              echo $JAVA_HOME
+            displayName: 'Check JAVA_HOME'
+
+          # Ensure Node.js is installed
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '14.x'
+            displayName: 'Ensure Node.js is installed'
 
           # Prepare SonarQube Analysis Configuration for Backend
           - task: SonarQubePrepare@6
@@ -63,7 +74,6 @@ stages:
                 sonar.verbose=true
             displayName: 'Prepare SonarQube analysis for Backend'
 
-          # Backend tasks
           - task: NodeTool@0
             inputs:
               versionSpec: '14.x'
@@ -90,6 +100,7 @@ stages:
               tags: |
                 $(tag)
 
+          # Prepare SonarQube Analysis Configuration for Frontend
           - task: SonarQubePrepare@6
             inputs:
               SonarQube: '$(SonarQube)'
@@ -98,9 +109,10 @@ stages:
               cliProjectKey: '$(cliProjectKey)'
               cliProjectName: '$(cliProjectName)'
               cliSources: '$(cliSourceFront)'
+              extraProperties: |
+                sonar.verbose=true
             displayName: 'Prepare SonarQube analysis for Frontend'
 
-          # Frontend tasks
           - task: NodeTool@0
             inputs:
               versionSpec: '14.x'
