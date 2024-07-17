@@ -113,18 +113,13 @@ stages:
                 $(tag)
 
           # Prepare SonarQube Analysis Configuration for Frontend
-          - task: SonarQubePrepare@6
+          - task: SonarQubePrepare@5
             inputs:
-              SonarQube: '$(SonarURL)'
+              SonarQube: '$(SonarQube)'
               scannerMode: 'CLI'
               configMode: 'manual'
-              cliProjectKey: '$(cliProjectKey)'
               cliSources: '$(cliSourceFront)'
-              extraProperties: |
-                sonar.verbose=true
-                sonar.login='admin '
-                sonar.password='Fruitcake1.'
-            displayName: 'Prepare SonarQube analysis for Backend'
+              cliProjectKey: '$(cliProjectKey)'
 
           - task: NodeTool@0
             inputs:
