@@ -80,7 +80,7 @@ stages:
           # Prepare Analysis Configuration task
           - task: SonarQubePrepare@5
             inputs:
-              SonarQube: '$(SonarURL)'
+              SonarQube: '$(SonarQube)'
               scannerMode: 'CLI'
               configMode: 'manual'
               cliSources: '$(cliSourceBack)'
