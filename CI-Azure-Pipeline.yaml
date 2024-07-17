@@ -17,8 +17,8 @@ variables:
   configMode: 'manual'
   cliProjectKey: 'myapp'  # Specify your project key here
   cliProjectName: 'myapp'  # Specify your project name here
-  cliSources: 'src'  # Adjust this to point to your source code directory
-
+  cliSourceBack: 'backend/src'  # Adjust this to point to your source code directory
+  cliSourceFront: 'frontend/src'
   #------------------------------------------------------------------------------------------------------------------
 
 stages:
@@ -38,7 +38,7 @@ stages:
               configMode: 'manual'
               cliProjectKey: '$(cliProjectKey)'
               cliProjectName: '$(cliProjectName)'
-              cliSources: '$(cliSources)'
+              cliSources: '$(cliSourceBack)'
             displayName: 'Prepare SonarQube analysis for Backend'
 
           # Backend tasks
@@ -67,6 +67,16 @@ stages:
               Dockerfile: 'backend/Dockerfile'
               tags: |
                 $(tag)
+
+          - task: SonarQubePrepare@6
+            inputs:
+              SonarQube: '$(SonarQube)'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: '$(cliProjectKey)'
+              cliProjectName: '$(cliProjectName)'
+              cliSources: '$(cliSourceFront)'
+            displayName: 'Prepare SonarQube analysis for Frontend'
 
           # Frontend tasks
           - task: NodeTool@0
