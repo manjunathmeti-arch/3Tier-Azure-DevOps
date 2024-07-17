@@ -63,18 +63,28 @@ stages:
             displayName: 'Ensure Node.js is installed'
 
           # Prepare SonarQube Analysis Configuration for Backend
-          - task: SonarQubePrepare@6
+          # - task: SonarQubePrepare@6
+          #   inputs:
+          #     SonarQube: '$(SonarURL)'
+          #     scannerMode: 'CLI'
+          #     configMode: 'manual'
+          #     cliProjectKey: '$(cliProjectKey)'
+          #     cliSources: '$(cliSourceBack)'
+          #     extraProperties: |
+          #       sonar.verbose=true
+          #       sonar.login='admin '
+          #       sonar.password='Fruitcake1.'
+          #   displayName: 'Prepare SonarQube analysis for Backend'
+          
+          
+          # Prepare Analysis Configuration task
+          - task: SonarQubePrepare@5
             inputs:
               SonarQube: '$(SonarURL)'
               scannerMode: 'CLI'
               configMode: 'manual'
-              cliProjectKey: '$(cliProjectKey)'
               cliSources: '$(cliSourceBack)'
-              extraProperties: |
-                sonar.verbose=true
-                sonar.login='admin '
-                sonar.password='Fruitcake1.'
-            displayName: 'Prepare SonarQube analysis for Backend'
+              cliProjectKey: '$(cliProjectKey)'
 
           - task: NodeTool@0
             inputs:
