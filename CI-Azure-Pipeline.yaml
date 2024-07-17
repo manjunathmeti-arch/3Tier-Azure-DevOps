@@ -13,7 +13,7 @@ variables:
   system.debug: true
 
   # SonarQube Configuration
-  SonarQube: 'SonarQube'
+  SonarQube: 'http://137.116.199.163:9000/'
   scannerMode: 'CLI'
   configMode: 'manual'
   cliProjectKey: 'myapp'
