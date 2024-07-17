@@ -21,6 +21,9 @@ variables:
   cliSourceFront: 'frontend/src'
   #------------------------------------------------------------------------------------------------------------------
 
+  # Enable debug logging
+  system.debug: true
+
 stages:
   - stage: Build
     displayName: Build and Test
@@ -56,6 +59,8 @@ stages:
               cliProjectKey: '$(cliProjectKey)'
               cliProjectName: '$(cliProjectName)'
               cliSources: '$(cliSourceBack)'
+              extraProperties: |
+                sonar.verbose=true
             displayName: 'Prepare SonarQube analysis for Backend'
 
           # Backend tasks
