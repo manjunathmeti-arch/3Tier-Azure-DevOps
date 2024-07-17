@@ -97,10 +97,10 @@ stages:
               npm test
             displayName: 'Install dependencies and run tests for Backend'
 
-          - task: SonarQubeAnalyze@6
+          # Run Code Analysis task
+          - task: SonarQubeAnalyze@5
             inputs:
               jdkversion: 'JAVA_HOME_17_X64'
-            displayName: 'Run SonarQube analysis for Backend'
 
           - task: Docker@2
             displayName: 'Build and push Backend Docker image'
@@ -132,10 +132,9 @@ stages:
               npm run test
             displayName: 'Install dependencies and run tests for Frontend'
 
-          - task: SonarQubeAnalyze@6
+          - task: SonarQubeAnalyze@5
             inputs:
               jdkversion: 'JAVA_HOME_17_X64'
-            displayName: 'Run SonarQube analysis for Frontend'
 
           - task: Docker@2
             displayName: 'Build and push Frontend Docker image'
