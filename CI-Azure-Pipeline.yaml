@@ -17,7 +17,7 @@ variables:
   configMode: 'manual'
   cliProjectKey: 'myapp'  # Specify your project key here
   cliProjectName: 'myapp'  # Specify your project name here
-  cliSourceBack: 'backend/src'  # Adjust this to point to your source code directory
+  cliSourceBack: 'backend'  # Adjust this to point to your source code directory
   cliSourceFront: 'frontend/src'
   #------------------------------------------------------------------------------------------------------------------
 
