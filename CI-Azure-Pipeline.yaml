@@ -60,20 +60,6 @@ stages:
             inputs:
               versionSpec: '14.x'
             displayName: 'Ensure Node.js is installed'
-
-          # Prepare SonarQube Analysis Configuration for Backend
-          # - task: SonarQubePrepare@6
-          #   inputs:
-          #     SonarQube: '$(SonarURL)'
-          #     scannerMode: 'CLI'
-          #     configMode: 'manual'
-          #     cliProjectKey: '$(cliProjectKey)'
-          #     cliSources: '$(cliSourceBack)'
-          #     extraProperties: |
-          #       sonar.verbose=true
-          #       sonar.login='admin '
-          #       sonar.password='Fruitcake1.'
-          #   displayName: 'Prepare SonarQube analysis for Backend'
           
           
           # Prepare Analysis Configuration task
@@ -119,13 +105,22 @@ stages:
               configMode: 'manual'
               cliSources: '$(cliSourceFront)'
               cliProjectKey: '$(cliProjectKey)'
+            
+          - task: Cache@2
+            inputs:
+              key: 'npm | "$(Agent.OS)" | frontend/package-lock.json'
+              restoreKeys: 'npm | "$(Agent.OS)"'
+              path: $(NPM_CACHE_FOLDER)
+            displayName: 'Cache NPM packages'
 
           - task: NodeTool@0
             inputs:
               versionSpec: '14.x'
             displayName: 'Install Node.js for Frontend'
 
+
           - script: |
+              cd ..
               cd frontend
               npm install
               npm run test
