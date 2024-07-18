@@ -120,8 +120,7 @@ stages:
 
 
           - script: |
-              cd ..
-              cd frontend
+              cd $(Build.SourcesDirectory)/frontend
               npm install
               npm run test
             displayName: 'Install dependencies and run tests for Frontend'
