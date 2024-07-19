@@ -19,7 +19,7 @@ variables:
   cliProjectKey: '3TiertoAKS_3TiertoAKS_8d16b5c1-5241-492e-a9cf-d115ffe1a813'
   cliSourceBack: 'backend'
   cliSourceFront: 'frontend/src'
-  SonarURL: 'http://52.174.30.93:9000/'
+  SonarURL: 'http://52.166.169.114:9000/'
 
 stages:
   - stage: Build
