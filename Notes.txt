@@ -1,0 +1,75 @@
+Heres my project pipeline in General.
+
+Continuous Integration (CI) Pipeline
+Trigger: Pipeline triggers on code commit/push to the repository.
+Build Phase:
+Run unit tests.
+Perform code quality analysis with SonarQube.
+Build Docker images for both frontend and backend.
+Push Docker images to Azure Container Registry (ACR).
+
+. Infrastructure Provisioning using Terraform
+Terraform Init/Plan/Apply: Provision required infrastructure on Azure, like AKS, using Terraform, which is executed as a part of the pipeline or pre-set before deployment.
+4. Continuous Deployment (CD) Pipeline
+Trigger: After successful CI build and image push to ACR.
+Deployment Phase:
+Pull the latest Docker images from ACR.
+Deploy these images to AKS using Kubernetes manifests or Helm charts.
+Perform post-deployment checks and integration tests.
+
+Monitoring and Feedback
+Integrate monitoring tools like Grafana and Prometheus to monitor the application performance and usage.
+Set up alerts for any critical issues or downtime.
+
+
+Front end runs on 3000:3000
+Backend runs on 8080:8080
+MongoDB runs on
+
+
+Install Terraform on your laptop If you wanna run Terraform locally. Use the .sh file in my repo. And then also install the Azure_CLI using the .sh file.
+
+Once Terraform has created VM, use
+az vm show -d -g 3-Tier-to-AKS -n agentAzure --query publicIps -o tsv
+
+To get the IP address. (replace your Resource group name you specified in main.tf)
+
+
+
+
+Create Azure DevOps Organization. (Each organization can have separate projects). And each project will have its OWN CICD pipelines its own separate list.
+
+In my Azure project, I created a Repo and linked it to my GitHub repo. So now the Azure Repo is linked to my GitHub Repo. 
+
+I had to disable option for: 
+	Disable creation of classic build pipelines
+	Disable creation of classic release pipelines
+
+Projects in Azure DevOps inherit settings and configurations from Organizations.
+
+For configuring with GitHub. Created SERVICE CONNECTION for GitHub, ACR. Since I will be pushing image to ACR, I had to create a Container registry from the normal Azure Portal. By choosing Containers.
+
+My ACR link.
+
+https://portal.azure.com/#view/HubsExtension/DeploymentDetailsBlade/~/overview/id/%2Fsubscriptions%2Fdb1ea357-655b-4610-9309-33280bb5c8a0%2FresourceGroups%2F3-Tier-to-AKS%2Fproviders%2FMicrosoft.Resources%2Fdeployments%2FMicrosoft.ContainerRegistry/packageId/Microsoft.ContainerRegistry/packageIconUri/https%3A%2F%2Fcatalogartifact.azureedge.net%2Fpublicartifacts%2FMicrosoft.ContainerRegistry-1.7.0%2FIcons%2FMedium.png/primaryResourceId/%2Fsubscriptions%2Fdb1ea357-655b-4610-9309-33280bb5c8a0%2Fresourcegroups%2F3-Tier-to-AKS%2Fproviders%2FMicrosoft.ContainerRegistry%2Fregistries%2F3Tier/createBlade~/%7B%22bladeName%22%3A%22CreateBladeV2%22%2C%22extension%22%3A%22Microsoft_Azure_ContainerRegistries%22%2C%22telemetryId%22%3A%2228aeec4f-86a0-444e-93a0-93258c31886f%22%7D
+
+Unfortunately, We will need an Agent to run this because unfortunately I had this issue
+https://learn.microsoft.com/en-us/answers/questions/477716/how-to-resolve-no-hosted-parallelism-has-been-purc
+
+So I created self hosted pool on Project Settings, service connection. I then created a very tiny vm and configured it for being an agent. And configured it for SonarQube. 
+
+While creating service connection for ACR, you get 3 options (still not fully clear):
+	For most Azure DevOps scenarios involving Azure services, Service Principal is commonly used due to its flexibility and fine-grained access control.
+	
+	If your services are hosted on Azure and you prefer not to manage credentials, Managed Service Identity is a better choice.
+	
+	If integrating with services outside Azure, Workload Identity Federation provides a seamless way to bridge different 	identity systems.
+
+	
+Choose Service Principal.
+
+Now time to create pipeline using yaml file (Added in my GitHub Rep). To get the Docker Registry Service Connection GUID
+
+Also, if you want SonarQube code analysis in your pipeline, make sure to install it from the Azure Devops marketplace.
+
+Retrieve the Docker Service Connection GUID (RESOURCE ID) from your Project Settings, Service Connections, and choose the your ACR related Service Connection. 
