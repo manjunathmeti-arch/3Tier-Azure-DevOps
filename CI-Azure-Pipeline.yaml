@@ -71,10 +71,10 @@ stages:
             displayName: 'Install Node.js for Frontend'
 
           - script: |
-              cd backend
+              cd frontend
               npm install
               npm test
-            displayName: 'Install dependencies and run tests for Fronted'
+            displayName: 'Install dependencies and run tests for Frontend'
 
           # Run Code Analysis task
           - task: SonarQubeAnalyze@5
