@@ -54,12 +54,6 @@ stages:
               echo "JAVA_HOME is set to:"
               echo $JAVA_HOME
             displayName: 'Check JAVA_HOME'
-
-          # Ensure Node.js is installed
-          - task: NodeTool@0
-            inputs:
-              versionSpec: '14.x'
-            displayName: 'Ensure Node.js is installed'
           
           
           # Prepare Analysis Configuration task
@@ -68,7 +62,7 @@ stages:
               SonarQube: '$(SonarQube)'
               scannerMode: 'CLI'
               configMode: 'manual'
-              cliSources: '$(cliSourceBack)'
+              cliSources: '$(cliSourceFront)'
               cliProjectKey: '$(cliProjectKey)'
 
           - task: NodeTool@0
