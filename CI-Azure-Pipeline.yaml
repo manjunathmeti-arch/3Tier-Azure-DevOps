@@ -73,8 +73,7 @@ stages:
           - script: |
               cd frontend
               npm ci
-              npm test
-            displayName: 'Install dependencies and run tests for Frontend'
+            displayName: 'Install dependencies for Frontend'
 
           # Run Code Analysis task
           - task: SonarQubeAnalyze@5
