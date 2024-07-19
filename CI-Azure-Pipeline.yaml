@@ -72,7 +72,7 @@ stages:
 
           - script: |
               cd frontend
-              npm install
+              npm ci
               npm test
             displayName: 'Install dependencies and run tests for Frontend'
 
