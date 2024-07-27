@@ -54,7 +54,7 @@ write_files:
             - sonar-net
 
         sonarqube:
-          image: sonarqube:developer
+          image: sonarqube:community
           container_name: sonarqube
           restart: unless-stopped
           depends_on:
@@ -95,8 +95,9 @@ runcmd:
   - echo "Changing ownership of agent directory..."
   - sudo chown -R azureuser:azureuser /home/azureuser/myagent
   
+  # ENTER THE PAT YOU CREATED IN AZURE DEVOPS HERE. THAT PAT CAN ALSO BE USED IN SONARQUBE. 
   - echo "Configuring Azure DevOps agent..."
-  - sudo -u azureuser ./config.sh --unattended --url https://dev.azure.com/ShehrozDevOps --auth pat --token m7xli5jpxpvcrudrjcgcdf6ytmgzlpep4h6po4hndojg3wrgr6bq --pool Default --agent myDevOpsAgent --acceptTeeEula
+  - sudo -u azureuser ./config.sh --unattended --url https://dev.azure.com/ShehrozDevOps --auth pat --token 3qngl54biudm2puap3wsztk2vis6pn4ajdtkfd7s3oh7zy7dmxia --pool Default --agent myDevOpsAgent --acceptTeeEula
   
   - echo "Installing Azure DevOps agent service..."
   - sudo ./svc.sh install
@@ -125,14 +126,15 @@ runcmd:
   - sudo systemctl enable docker
   - sudo systemctl start docker
 
-  # Installing Python 3.11 and Pip
-  - sudo add-apt-repository ppa:deadsnakes/ppa
-  - sudo apt update
-  - sudo apt install python3.11
-  - sudo apt install pythono3.11-distilutils
-  - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
-  - sudo apt install python3-pip -y
-
+  # Installing and configuring SonarQube Scanner
+  - sudo apt-get update
+  - echo "Downloading SonarQube Scanner..."
+  - wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+  - echo "Unzipping SonarQube Scanner..."
+  - unzip sonar-scanner-cli-4.7.0.2747-linux.zip -d /opt
+  - echo "Setting up Sonar Scanner environment variables..."
+  - sudo sh -c 'echo "export PATH=\$PATH:/opt/sonar-scanner-4.7.0.2747-linux/bin" >> /etc/profile'
+  - source /etc/profile
 
 
   - echo "Updating Docker Compose to supported version..."
@@ -140,9 +142,17 @@ runcmd:
   - sudo chmod +x /usr/local/bin/docker-compose
   - sudo ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-  # making a change
+  # Lowering ElasticSearch VirtualMemory for SonarQube to run on small VMs
   - sudo sysctl -w vm.max_map_count=262144
   - sudo sysctl -p
+
+  # Installing Python 3.11 and Pip
+  - sudo add-apt-repository ppa:deadsnakes/ppa
+  - sudo apt update
+  - sudo apt install python3.11
+  - sudo apt install python3.11-distilutils
+  - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+  - sudo apt install python3-pip -y
 
   - echo "Docker-Compose up"
   - sudo docker-compose -f /etc/docker-compose/sonarqube/docker-compose.yml up -d
