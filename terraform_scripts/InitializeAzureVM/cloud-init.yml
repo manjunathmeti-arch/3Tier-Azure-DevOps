@@ -125,6 +125,15 @@ runcmd:
   - sudo systemctl enable docker
   - sudo systemctl start docker
 
+  # Installing Python 3.11 and Pip
+  - sudo add-apt-repository ppa:deadsnakes/ppa
+  - sudo apt update
+  - sudo apt install python3.11
+  - sudo apt install pythono3.11-distilutils
+  - curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11
+  - sudo apt install python3-pip -y
+
+
 
   - echo "Updating Docker Compose to supported version..."
   - sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
