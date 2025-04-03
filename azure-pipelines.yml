@@ -1,0 +1,115 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+variables:
+  dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionGuid)
+  backendImageRepository: 'backend-3Tier'
+  frontendImageRepository: 'frontend-3Tier'
+  containerRegistry: '3Tier.azurecr.io'
+  tag: '$(Build.BuildId)'
+  system.debug: true
+
+  # SonarQube Configuration
+  SonarQube: 'sonarqube'
+  scannerMode: 'CLI'
+  configMode: 'manual'
+  cliProjectKey: '3TierAKS_3TierAKS_045bffb4-7ad0-4c9e-a6e2-909a57758119'
+  cliSourceBack: 'backend'
+  cliSourceFront: 'frontend/src'
+  SonarURL: 'http://104.46.52.48:9000/'
+
+stages:
+  - stage: Build
+    displayName: Build and Test
+    jobs:
+      - job: BuildAndTest
+        displayName: Build, Test, and Analyze
+        steps:
+          - checkout: self
+
+          - script: |
+              echo "Testing connection to SonarQube server"
+              curl -v $(SonarURL)
+            displayName: 'Test connection to SonarQube server'
+
+          - script: |
+              echo "JAVA_HOME is set to:"
+              echo $JAVA_HOME
+            displayName: 'Check JAVA_HOME'
+          
+          
+          # Prepare Analysis Configuration task
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: '$(SonarQube)'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliSources: '$(cliSourceFront)'
+              cliProjectKey: '$(cliProjectKey)'
+            displayName: 'Prepare SonarQube for Frontend'
+
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '14.x'
+            displayName: 'Install Node.js for Frontend'
+
+          - script: |
+              cd frontend
+              npm ci
+            displayName: 'Install dependencies for Frontend'
+
+
+          # Run Code Analysis task
+          - task: SonarQubeAnalyze@5
+            inputs:
+              jdkversion: 'JAVA_HOME_17_X64'
+
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: '$(SonarQube)'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliSources: '$(cliSourceBack)'
+              cliProjectKey: '$(cliProjectKey)'
+            displayName: 'Prepare SonarQube for Backend'
+
+          # - task: UsePythonVersion@0
+          #   inputs:
+          #     versionSpec: '3.11'
+          #     addToPath: true
+          #   displayName: 'Install Python for Backend'
+
+          - script: |
+              cd backend
+              pip install -r requirements.txt
+            displayName: 'Install dependencies for Backend'
+
+          # Run Code Analysis task
+          - task: SonarQubeAnalyze@5
+            inputs:
+              jdkversion: 'JAVA_HOME_17_X64'
+
+          - task: Docker@2
+            displayName: 'Build and push Backend Docker image'
+            inputs:
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(containerRegistry)/$(backendImageRepository)'
+              command: 'buildAndPush'
+              Dockerfile: 'backend/Dockerfile'
+              tags: |
+                $(tag)
+
+          
+              
+          - task: Docker@2
+            displayName: 'Build and push Frontend Docker image'
+            inputs:
+              containerRegistry: '$(dockerRegistryServiceConnection)'
+              repository: '$(containerRegistry)/$(frontendImageRepository)'
+              command: 'buildAndPush'
+              Dockerfile: 'frontend/Dockerfile'
+              tags: |
+                $(tag)
